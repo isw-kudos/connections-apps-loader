@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>com.isw.kudos.external-apps-core</display-name>
+	<!-- <welcome-file-list>
+		<welcome-file>loader.jsp</welcome-file>
+	</welcome-file-list> -->
+	
+	<servlet>
+		<servlet-name>loader</servlet-name>
+		<jsp-file>loader.jsp</jsp-file>
+	</servlet>
+	
+	<!-- <servlet>
+		<servlet-name>resources</servlet-name>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>resources</servlet-name>
+		<url-pattern>/js/*</url-pattern>
+	</servlet-mapping>-->
+	
+	<servlet-mapping>
+	    <servlet-name>loader</servlet-name>
+	    <url-pattern>/*</url-pattern>
+	</servlet-mapping>
+</web-app>
