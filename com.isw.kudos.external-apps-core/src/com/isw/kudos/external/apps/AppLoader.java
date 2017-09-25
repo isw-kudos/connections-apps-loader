@@ -1,6 +1,5 @@
 package com.isw.kudos.external.apps;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +18,6 @@ public class AppLoader {
 	protected final static Logger log = Logger.getLogger(AppLoader.class.getName());
 	static final String WAS_CONFIG_VARIABLE = "EXTERNAL_APPS_CONFIG";
 	static JSONObject config = null;
-	static Date lastConfig = null;
-	static long EXPIRES_IN = 5 * 60 * 1000;
 	
 	/**
 	 * Gets the path stored under the webSphere variable ACTIVITIES_CONTENT  
@@ -29,19 +26,19 @@ public class AppLoader {
 	public static JSONObject getConfig()
 	{
 		final String funcName = "getConfig";
-		if(config == null || (lastConfig.getTime()+EXPIRES_IN) < System.currentTimeMillis() )
+		if(config == null)
 		{
 			String configStr = getWebsphereVariableValue(WAS_CONFIG_VARIABLE);
 			String errMsg = "Cannot load app configuration. " +
 				"Please ensure you have created a WebSphere variable in the format: " +
 				"{ \"ideas\": \"https://localdev.isw.net.au\", \"buzzy\":\"https://buzzy.buzz\" }";
+			
 			if(configStr==null || configStr.isEmpty()) {
 				log.logp(Level.WARNING, clsName, funcName, errMsg);
 				return new JSONObject();
 			}
 			
 			try {
-				lastConfig = new Date();
 				config = new JSONObject(configStr);
 			} catch (JSONException e) {
 				log.logp(Level.SEVERE, clsName, funcName, "Error occurred while loading the config. "+errMsg, e);				

@@ -6,6 +6,14 @@
 	</welcome-file-list> -->
 	
 	<servlet>
+		<description>Startup loader</description>
+		<display-name>ApplicationStartup</display-name>
+		<servlet-name>ApplicationStartup</servlet-name>
+		<servlet-class>com.isw.kudos.external.apps.ApplicationStartup</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	
+	<servlet>
 		<servlet-name>loader</servlet-name>
 		<jsp-file>loader.jsp</jsp-file>
 	</servlet>
