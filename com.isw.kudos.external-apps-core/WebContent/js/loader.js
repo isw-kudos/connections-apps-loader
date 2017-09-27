@@ -38,6 +38,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 		var contextPath = window.kudosAppLoader.contextPath;
 		var urlParts = window.location.pathname.replace(contextPath,"").split("/");
 		var remoteAppName = urlParts.length > 1 ? urlParts[1] : null;
+		var appContext = contextPath + "/"+remoteAppName;
 		var configURLStr = remoteAppName ? config[remoteAppName] : null;
 		var appFrame = document.getElementById("app-frame");
 		
@@ -68,8 +69,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			
 			//load our frame to the correct route
 			if(appFrame) {
-				var appRoot = configURL.origin + configURL.pathname;
-				var appContext = contextPath + "/"+remoteAppName;
+				var appRoot = configURL.origin + (configURL.pathname==='/' ? '' : configURL.pathname);
 				var currentAppRoute = window.location.pathname.replace(appContext,"");
 				
 				var searches = [];
