@@ -38,18 +38,8 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 		var contextPath = window.kudosAppLoader.contextPath;
 		var urlParts = window.location.pathname.replace(contextPath,"").split("/");
 		var remoteAppName = urlParts.length > 1 ? urlParts[1] : null;
-		
-		var appContext = contextPath + (remoteAppName ? "/"+remoteAppName : "");
-		var appRoot = config[remoteAppName];
-//		console.log('appContext', appContext);
-//		console.log('appRoot', appRoot);
+		var configURLStr = remoteAppName ? config[remoteAppName] : null;
 		var appFrame = document.getElementById("app-frame");
-		var currentAppRoute = "";
-		
-		function getAppRoute() {
-			currentAppRoute = (remoteAppName ? window.location.pathname.replace(appContext,"") + window.location.hash : "");
-			return currentAppRoute;
-		}
 		
 		//add the Connections body (header etc)
 		writeToPage(connectionsPage.body);
@@ -60,41 +50,35 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			appFrame.style.paddingTop = bodyHeight+'px';
 		
 		//check if we're showing a page!
-		if(appRoot) {
+		if(configURLStr) {
+			var configURL = new URL(configURLStr);
+			
 			//ensure Connections title is cleared
 			setTitle(getTitleCase(remoteAppName));		
 			
 			function receiveAppMessage(event) {
-				if(!event || !event.data || event.origin !== appRoot) return;
+				if(!event || !event.data || event.origin !== configURL.origin) return;
 				
 				var data = event.data;
-				if(data.route) {
-//					console.log('iframe says route changed', data.route);
-					if(data.route!==currentAppRoute) {
-						currentAppRoute = data.route;
-						history.pushState(null, '', appContext + data.route);
-					}
-//					else console.log('ignoring as not actually changed');
-				}
-				
+				if(data.route) history.replaceState(null, null, appContext + data.route);
 				if(data.title) setTitle(data.title);
 				if(data.icon) setIcon(data.icon);
 			}
 			window.addEventListener("message", receiveAppMessage, false);
 			
-			window.onpopstate = function(event) {
-				console.log('back/forward to', getAppRoute());
-				if(appFrame && appFrame.contentWindow) {
-					appFrame.contentWindow.postMessage({ route: getAppRoute() },"*");
-				}
-//				updateFrameURL();
-//				alert("location: " + document.location + ", state: " + JSON.stringify(event.state));
-			};
-			
 			//load our frame to the correct route
 			if(appFrame) {
-//				console.log('updating frame to', appRoot + currentAppRoute);
-				appFrame.src = appRoot + getAppRoute();
+				var appRoot = configURL.origin + configURL.pathname;
+				var appContext = contextPath + "/"+remoteAppName;
+				var currentAppRoute = window.location.pathname.replace(appContext,"");
+				
+				var searches = [];
+				if(window.location.search) searches.push(window.location.search.replace('?',''));
+				if(configURL.search) searches.push(configURL.search.replace('?',''));
+				var currentSearch = searches.length ? '?'+searches.join('&') : '';
+				var currentHash = window.location.hash || configURL.hash;
+//				console.log('setting', appRoot, currentAppRoute, currentSearch, currentHash);
+				appFrame.src = appRoot + currentAppRoute + currentSearch + currentHash;
 			}
 		}
 		else {
