@@ -69,8 +69,9 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			
 			//load our frame to the correct route
 			if(appFrame) {
-				var appRoot = configURL.origin + (configURL.pathname==='/' ? '' : configURL.pathname);
-				var currentAppRoute = window.location.pathname.replace(appContext,"");
+				var appRoot = configURL.origin;
+				var initialRoute = configURL.pathname==='/' ? '' : configURL.pathname;
+				var requestedRoute = window.location.pathname.replace(appContext,"");
 				
 				var searches = [];
 				if(window.location.search) searches.push(window.location.search.replace('?',''));
@@ -78,7 +79,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 				var currentSearch = searches.length ? '?'+searches.join('&') : '';
 				var currentHash = window.location.hash || configURL.hash;
 //				console.log('setting', appRoot, currentAppRoute, currentSearch, currentHash);
-				appFrame.src = appRoot + currentAppRoute + currentSearch + currentHash;
+				appFrame.src = appRoot + (requestedRoute || initialRoute) + currentSearch + currentHash;
 			}
 		}
 		else {
