@@ -9,8 +9,10 @@
 	<script>
 		window.kudosAppLoader = {
 			appLoaderConfig: <%= AppLoader.getConfig() %>,
-			contextPath: "<%= request.getContextPath() %>",
+			contextPath: "<%= request.getContextPath() %>"
 		};
+		
+		<%@include file="js/url-polyfill.min.js" %>
 		<%@include file="js/jquery.min.js" %>
 		<%@include file="js/loader.min.js" %>
 	</script>

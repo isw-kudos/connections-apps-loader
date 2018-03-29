@@ -29,7 +29,8 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 
 	function redirectToLogin() {
 		//try redirecting through the login page
-		window.location.href = "/blogs/roller-ui/login-redirect.jsp?redirect="+encodeURIComponent(window.location.href);
+		var redirectWithoutProtocol = location.href.replace(location.origin, '/..');
+		window.location.href = "/blogs/roller-ui/login-redirect.jsp?redirect="+encodeURIComponent(redirectWithoutProtocol);
 	}
 
 	//function to be called in the body to load iframe
