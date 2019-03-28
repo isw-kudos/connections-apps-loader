@@ -28,7 +28,7 @@ EXTERNAL_APPS_CONFIG =
 {"ideas":"https://ideas.isw.net.au","buzzy":"https://buzzy.buzz","contacts":"https://apps.isw.net.au"}
 ```
 
-### Install Options:
+#### Install Options:
 a) Install EAR in WebSphere using default binding of `/apps`  
 Load `https://connections.company.com/apps` to see all apps defined above.  
 Each app will be available at this path, ie:   
