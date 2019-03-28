@@ -2,11 +2,11 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 
 (function main() {
 	var connectionsPage = {};
-	
+
 	function setTitle(str) {
 		window.document.title = str || "";
 	}
-	
+
 	function setIcon(iconUrl) {
 		var link = document.querySelector("link[rel*='icon']");
 		if(!link) {
@@ -17,11 +17,11 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 	    link.rel = 'shortcut icon';
 	    link.href = iconUrl;
 	}
-	
+
 	function writeToPage(str) {
 		document.write(str);
 	}
-	
+
 	function getTitleCase(str) {
 		if(!str) return null;
 		return str.charAt(0).toUpperCase() + str.slice(1);
@@ -36,44 +36,61 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 	//function to be called in the body to load iframe
 	window.kudosAppLoader.go = function() {
 		var config = window.kudosAppLoader.appLoaderConfig;
+		// normally /apps but can also be /appname
 		var contextPath = window.kudosAppLoader.contextPath;
-		var urlParts = window.location.pathname.replace(contextPath,"").split("/");
-		var remoteAppName = urlParts.length > 1 ? urlParts[1] : null;
-		var appContext = contextPath + "/"+remoteAppName;
+
+		// calculate the desired appname
+		var remoteAppName;
+		var appContext;
+
+		var contextPathWithoutLeadingSlash = contextPath.replace(/^\//, '');
+		if (config[contextPathWithoutLeadingSlash]) {
+			//allow this app to directly load an app if the contextRoot is actually an app definition
+			remoteAppName = contextPathWithoutLeadingSlash; // appName
+			appContext = contextPath; // /appName
+		}
+		else {
+			//otherwise, take the next part of the url
+			var urlParts = window.location.pathname.replace(contextPath,"").split("/");
+			remoteAppName = urlParts.length > 1 ? urlParts[1] : null;
+			// ie /apps/appName
+			appContext = contextPath + "/"+remoteAppName;
+		}
+
 		var configURLStr = remoteAppName ? config[remoteAppName] : null;
 		var appFrame = document.getElementById("app-frame");
-		
+
 		//add the Connections body (header etc)
 		writeToPage(connectionsPage.body);
-		
+
 		//ensure the header height is reasonable
 		var bodyHeight = $(document.body).height();
 		if(bodyHeight && bodyHeight < 100)
 			appFrame.style.paddingTop = bodyHeight+'px';
-		
+
 		//check if we're showing a page!
 		if(configURLStr) {
 			var configURL = new URL(configURLStr);
-			
+
 			//ensure Connections title is cleared
-			setTitle(getTitleCase(remoteAppName));		
-			
+			setTitle(getTitleCase(remoteAppName));
+
 			function receiveAppMessage(event) {
 				if(!event || !event.data || event.origin !== configURL.origin) return;
-				
+
 				var data = event.data;
 				if(data.route) history.replaceState(null, null, appContext + data.route);
 				if(data.title) setTitle(data.title);
 				if(data.icon) setIcon(data.icon);
 			}
 			window.addEventListener("message", receiveAppMessage, false);
-			
+
 			//load our frame to the correct route
 			if(appFrame) {
 				var appRoot = configURL.origin;
 				var initialRoute = configURL.pathname==='/' ? '' : configURL.pathname;
 				var requestedRoute = window.location.pathname.replace(appContext,"");
-				
+
 				var searches = [];
 				if(window.location.search) searches.push(window.location.search.replace('?',''));
 				if(configURL.search) searches.push(configURL.search.replace('?',''));
@@ -85,7 +102,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 		}
 		else {
 			if(appFrame) appFrame.style.display = 'none';
-			
+
 			var linkWrapper = $('<div class="app-links" ></div>');
 			$(document.body).append(linkWrapper);
 			for(var remoteAppName in config) {
@@ -118,7 +135,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 				}
 				return null;
 			}
-			
+
 			//remove annoying things
 			var headStr = extractTagContent(data, "head");
 			headStr = headStr.replace(/<title>[^<]*<\/title>/, '');
@@ -126,21 +143,21 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			//how could this possibly go wrong...?
 			headStr = headStr.replace(/document.title[\s]*=[^;]*;/g, '');
 			connectionsPage.head = headStr;
-			
+
 			var bodyStr = extractTagContent(data, "body");
 			//how could this possibly go wrong...?
 			bodyStr = bodyStr.replace(/document.title[\s]*=[^;]*;/g, '');
 			connectionsPage.body = bodyStr;
-			
+
 		}).fail(function(xhr, textStatus, errorThrown) {
 			console.error("Connections integration load failure",arguments);
 			redirectToLogin();
 		});
 	}
-	
+
 	getConnectionsPage();
 	writeToPage(connectionsPage.head);
-	
+
 	//check Connections variable to see if header worked
 	if(!window.appName) redirectToLogin();
 })();
