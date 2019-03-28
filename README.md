@@ -11,6 +11,8 @@ Export `com.isw.kudos.external-apps` as `.ear`
 
 
 ## Install process
+Download latest .ear from [releases page](https://github.com/isw-kudos/connections-apps-loader/releases)
+
 Set WebSphere variable to configure the apps/urls to open through the frame:   
 ```
 EXTERNAL_APPS_CONFIG =
