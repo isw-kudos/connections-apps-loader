@@ -17,8 +17,8 @@ EXTERNAL_APPS_CONFIG =
 {"[APP_NAME]":"[URL_OF_APP]","[APP_NAME_2]":"[URL_OF_APP_2]"}
 ```
 where:   
-`APP_NAME` is unique, without spaces or special characters   
-`URL_OF_APP` is a web address, ie `https://google.com`
+`[APP_NAME]` is unique, without spaces or special characters   
+`[URL_OF_APP]` is a web address, ie `https://google.com`
 
 For example, here are 3 apps we load:
 ```
