@@ -7,7 +7,7 @@
 
 	<jsp-attribute name="trackDependencies" value="true"/>
 	<reload-interval value="3"/>
-	<context-root uri="/apps" />
+	<context-root uri="/boards" />
 	<enable-directory-browsing value="false"/>
 	<enable-file-serving value="true"/>
 	<enable-reloading value="true"/>
