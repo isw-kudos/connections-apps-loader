@@ -13,9 +13,9 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			link = document.createElement('link');
 			document.getElementsByTagName('head')[0].appendChild(link);
 		}
-	    link.type = 'image/x-icon';
-	    link.rel = 'shortcut icon';
-	    link.href = iconUrl;
+    link.type = 'image/x-icon';
+    link.rel = 'shortcut icon';
+    link.href = iconUrl;
 	}
 
 	function writeToPage(str) {
@@ -57,6 +57,8 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 			appContext = contextPath + "/"+remoteAppName;
 		}
 
+		document.body.classList.add(remoteAppName)
+
 		var configURLStr = remoteAppName ? config[remoteAppName] : null;
 		var appFrame = document.getElementById("app-frame");
 
@@ -65,7 +67,7 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 
 		//ensure the header height is reasonable
 		var bodyHeight = $(document.body).height();
-		if(bodyHeight && bodyHeight < 100)
+		if(appFrame && bodyHeight && bodyHeight < 100)
 			appFrame.style.paddingTop = bodyHeight+'px';
 
 		//check if we're showing a page!
@@ -79,9 +81,26 @@ window.kudosAppLoader = window.kudosAppLoader || {};
 				if(!event || !event.data || event.origin !== configURL.origin) return;
 
 				var data = event.data;
-				if(data.route) history.replaceState(null, null, appContext + data.route);
-				if(data.title) setTitle(data.title);
-				if(data.icon) setIcon(data.icon);
+				if (typeof data==='String') {
+					data = { command: data };
+				}
+
+				const { command, route, title, icon} = data || {};
+				if(command==='appReady' || command==='applicationReady') {
+					const { currentLogin: user = {}, origin } = window;
+
+					appFrame && appFrame.contentWindow.postMessage({
+						source: { resourceType: 'header-frame' },
+						context: {
+							origin,
+						},
+						user,
+					}, '*');
+				}
+
+				if(route) history.replaceState(null, null, appContext + route);
+				if(title) setTitle(title);
+				if(icon) setIcon(icon);
 			}
 			window.addEventListener("message", receiveAppMessage, false);
 

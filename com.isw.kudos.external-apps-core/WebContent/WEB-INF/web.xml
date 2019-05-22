@@ -1,10 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 	<display-name>com.isw.kudos.external-apps-core</display-name>
-	<!-- <welcome-file-list>
-		<welcome-file>loader.jsp</welcome-file>
-	</welcome-file-list> -->
-	
+
+	<security-role>
+		<description>Any authenticated user</description>
+		<role-name>Everyone</role-name>
+	</security-role>
+	<security-role>
+		<description>Access to the App in the frame</description>
+		<role-name>Access</role-name>
+	</security-role>
+
+	<security-constraint>
+		<display-name>Loading Constraint</display-name>
+		<web-resource-collection>
+			<web-resource-name>Loading Resources</web-resource-name>
+			<url-pattern>/*</url-pattern>
+			<http-method>GET</http-method>
+		</web-resource-collection>
+		<auth-constraint>
+			<description>Who can load the App</description>
+			<role-name>Access</role-name>
+		</auth-constraint>
+		<user-data-constraint>
+			<transport-guarantee>NONE</transport-guarantee>
+		</user-data-constraint>
+	</security-constraint>
+
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>../blogs/login</form-login-page>
+			<form-error-page>/unlicenced.jsp</form-error-page>
+		</form-login-config>
+	</login-config>
+
 	<servlet>
 		<description>Startup loader</description>
 		<display-name>ApplicationStartup</display-name>
@@ -12,23 +42,18 @@
 		<servlet-class>com.isw.kudos.external.apps.ApplicationStartup</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
 	<servlet>
 		<servlet-name>loader</servlet-name>
 		<jsp-file>loader.jsp</jsp-file>
 	</servlet>
-	
-	<!-- <servlet>
-		<servlet-name>resources</servlet-name>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>resources</servlet-name>
-		<url-pattern>/js/*</url-pattern>
-	</servlet-mapping>-->
-	
+
 	<servlet-mapping>
 	    <servlet-name>loader</servlet-name>
 	    <url-pattern>/*</url-pattern>
 	</servlet-mapping>
+	<error-page>
+		<error-code>403</error-code>
+		<location>/unlicenced.jsp</location>
+	</error-page>
 </web-app>

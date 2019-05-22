@@ -10,25 +10,13 @@ public class ApplicationStartup extends HttpServlet implements Servlet  {
 	public static ApplicationStartup servletInstance = null;
 
 	/**
-	 * Called by the WAS servlet container. 
-	 * Initialises the timer, 
-	 * deletes decertified badges, 
-	 * deletes awarded rank badges 
-	 * and saves the profiles stats directory path to the  
+	 * Called by the WAS servlet container.
 	 */
 	public void init() throws ServletException
 	{
 		super.init();
 
-		saveWASVariables();
+		AppLoader.loadVariables();
 		servletInstance = this;
-	}
-
-	/**
-	 * Get the config from the websphere variable on startup
-	 */
-	private void saveWASVariables()
-	{
-		AppLoader.getConfig();
 	}
 }

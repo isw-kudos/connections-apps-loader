@@ -25,7 +25,7 @@
 	<%= AppLoader.injectCSS() %>
 </head>
 <body class="lotusui lotusui30 lotusui30dojo lotusui30_body lotusui30_fonts lotusui30 lotusBlue lotusSpritesOn">
-	<iframe id="app-frame" class="app-frame"></iframe>
 	<script>window.kudosAppLoader.go();</script>
+	<h3><%= AppLoader.getNotAuthMessage() %></h3>
 </body>
 </html>
